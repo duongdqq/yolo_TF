@@ -17,23 +17,15 @@ import common_layer as cl
 # t12 = tf.concat([t1, t2], -1)
 # print(t12)
 
-input_data = tf.keras.layers.Input([608, 608, 3])
-x = layers.Conv2D(filters=32,
-                  kernel_size=3,
-                  strides=1,
-                  padding='same',
-                  kernel_regularizer=tf.keras.regularizers.l2(0.0005),
-                  kernel_initializer=tf.random_normal_initializer(stddev=0.01),
-                  bias_initializer=tf.constant_initializer(0.))(input_data)
-x = layers.Conv2D(filters=64,
-                  kernel_size=3,
-                  strides=2,
-                  padding='valid',
-                  kernel_regularizer=tf.keras.regularizers.l2(0.0005),
-                  kernel_initializer=tf.random_normal_initializer(stddev=0.01),
-                  bias_initializer=tf.constant_initializer(0.))(input_data)
-x = layers.
+model = keras.models.Sequential()
+model.add(layers.Embedding(max_features, 128, input_length=max_len,
+                       input_shape=(max_len,), name='embed'))
+model.add(layers.Conv1D(32, 7, activation='relu'))
+model.add(layers.MaxPooling1D(5))
+model.add(layers.Conv1D(32, 7, activation='relu'))
+model.add(layers.GlobalMaxPooling1D())
+model.add(layers.Dense(1))
 
-output_data = layers.Dense(4)(x)
-model = keras.Model(input_data, output_data)
-model.summary()
+from keras.utils import plot_model
+
+plot_model(model, show_shapes=True, to_file='model.png')
